@@ -7,7 +7,6 @@ metadata:
 spec:
   tls:
     - hosts:
-        - k8s.michaelsmith.xyz
         - www.michaelsmith.xyz
         - michaelsmith.xyz
         - smith.pizza
