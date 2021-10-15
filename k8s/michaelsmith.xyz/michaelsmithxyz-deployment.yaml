@@ -17,6 +17,7 @@ spec:
       containers:
         - name: michaelsmithxyz
           image: michaelsmithxyz/michaelsmith.xyz:master
+          imagePullPolicy: Always
           resources:
             limits:
               cpu: 100m
