@@ -4,9 +4,11 @@
 
 michaelsmith.xyz/dist/
 
-smith.pizza/*/bin
-smith.pizza/*/obj/
-smith.pizza/*/artifacts/
+bin/
+obj/
+artifacts/
 
 node_modules/
 *.log
+
+postgres/data/
