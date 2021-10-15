@@ -13,6 +13,8 @@ artifacts/
 !*/.yarn/plugins
 .pnp.*
 
+.parcel-cache/
+
 *.log
 
 postgres/data/
