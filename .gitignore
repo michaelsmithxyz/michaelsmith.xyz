@@ -2,13 +2,17 @@
 .idea/
 .vscode/
 
-michaelsmith.xyz/dist/
+dist/
 
 bin/
 obj/
 artifacts/
 
-node_modules/
+*/.yarn/*
+!*/.yarn/releases
+!*/.yarn/plugins
+.pnp.*
+
 *.log
 
 postgres/data/
