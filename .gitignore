@@ -3,10 +3,9 @@
 .vscode/
 
 dist/
+node_modules/
 
-bin/
-obj/
-artifacts/
+smith.pizza/.env
 
 */.yarn/*
 !*/.yarn/releases
