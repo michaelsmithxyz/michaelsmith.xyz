@@ -5,7 +5,7 @@
 dist/
 node_modules/
 
-smith.pizza/.env
+.env
 
 */.yarn/*
 !*/.yarn/releases
