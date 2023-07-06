@@ -1,0 +1,23 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - 'master'
+jobs:
+  deploy:
+    name: 'Deploy smith.pizza'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - run: make smith.pizza/build
+      - uses: denoland/deployctl@v1
+        with:
+          project: smith-pizza
+          root: ./smith.pizza/dist/
+          entrypoint: smith-pizza.ts

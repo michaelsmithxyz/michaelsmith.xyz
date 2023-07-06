@@ -17,7 +17,12 @@ const orDefault = (
   Deno.env.get(key) ?? defaultValue
 );
 
-export const config = {
+type Config = ReturnType<typeof makeConfig>;
+const makeConfig = () => ({
+  port: orDefault(
+    'SMITH_PIZZA_PORT',
+    '8000'
+  ),
   apiKeyHeader: 'X-Api-Key',
   hmacKey: require('SMITH_PIZZA_HMAC_KEY'),
   store: orDefault(
@@ -52,10 +57,26 @@ export const config = {
     'SMITH_PIZZA_POSTGRES_CERTIFICATE',
     '',
   ),
-};
+});
 
-export const requireConfig = (key: keyof typeof config) => {
-  if (config[key] === '') {
+
+
+export const loadConfig = async (
+  envPath?: string,
+) => {
+  await load({ envPath, export: true });
+}
+
+export const config = (
+  key: keyof Config,
+): string => (
+  makeConfig()[key]
+);
+
+export const requireConfig = (
+  key: keyof Config,
+) => {
+  if (config(key)) {
     throw new Error(`${key} is required`);
   }
 };

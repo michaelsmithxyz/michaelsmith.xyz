@@ -10,16 +10,15 @@ SMITH_PIZZA_DIST_DIR=${SMITH_PIZZA_BASE}/dist
 SMITH_PIZZA_BUNDLE=${SMITH_PIZZA_DIST_DIR}/smith-pizza.ts
 
 smith.pizza/run:
-	${DENO_RUN} ${SMITH_PIZZA_BASE}/src/main.ts
+	${DENO_RUN} ${SMITH_PIZZA_ENTRYPOINT}
 
 smith.pizza/check:
 	deno check ${SMITH_PIZZA_ENTRYPOINT}
 
-smith.pizza/deploy:
+smith.pizza/build:
 	rm -rf ${SMITH_PIZZA_DIST_DIR}
 	mkdir ${SMITH_PIZZA_DIST_DIR}
 	deno bundle ${SMITH_PIZZA_ENTRYPOINT} ${SMITH_PIZZA_BUNDLE}
-# deployctl deploy --project=smith-pizza main.ts
 
 smith.pizza/generateHmacKey:
 	${DENO_RUN} ${SMITH_PIZZA_BASE}/scripts/generateHmacKey.ts

@@ -1,4 +1,4 @@
-name: smith-pizza
+name: "Commit checks"
 on: [push]
 jobs:
   typecheck:
