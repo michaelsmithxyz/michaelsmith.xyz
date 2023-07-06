@@ -65,30 +65,30 @@ export class PostgresStore implements Store {
     requireConfig('postgresTable');
 
     let tls: Partial<TLSOptions> | undefined = undefined;
-    if (config.postgresCertificate !== '') {
+    if (config('postgresCertificate') !== '') {
       tls = {
         enabled: true,
         enforce: true,
         caCertificates: [
-          decodeCertificate(config.postgresCertificate),
+          decodeCertificate(config('postgresCertificate')),
         ],
       };
     }
 
     this.#pool = new Pool(
       {
-        hostname: config.postgresHost,
-        port: config.postgresPort,
-        database: config.postgresDatabase,
-        user: config.postgresUser,
-        password: config.postgresPassword,
+        hostname: config('postgresHost'),
+        port: config('postgresPort'),
+        database: config('postgresDatabase'),
+        user: config('postgresUser'),
+        password: config('postgresPassword'),
         tls,
       },
       this.#poolSize,
       true, // lazy
     );
     this.#table = PostgresStore.#quoteIdentifier(
-      config.postgresTable,
+      config('postgresTable'),
     );
   }
 
@@ -157,7 +157,7 @@ export class PostgresStore implements Store {
 }
 
 export const getStore = (): Store => {
-  const type = config.store as StoreType;
+  const type = config('store') as StoreType;
   console.log(`Store type = ${type}`);
   if (type === 'memory') {
     return new InMemoryStore();

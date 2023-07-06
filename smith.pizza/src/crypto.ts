@@ -14,12 +14,14 @@ export const hmacKeyUsages: KeyUsage[] = [
   'verify',
 ];
 
-const hmacKey = await crypto.subtle.importKey(
-  'jwk',
-  JSON.parse(config.hmacKey),
-  hmacKeyAlgorithm,
-  true,
-  hmacKeyUsages,
+const getHmacKey = async () => (
+  await crypto.subtle.importKey(
+    'jwk',
+    JSON.parse(config('hmacKey')),
+    hmacKeyAlgorithm,
+    true,
+    hmacKeyUsages,
+  )
 );
 
 export type RawSignedApiKey = {
@@ -44,7 +46,7 @@ export const signApiKey = async (
   const data = encoder.encode(serialized);
   const signature = await crypto.subtle.sign(
     hmacKeyAlgorithm,
-    hmacKey,
+    await getHmacKey(),
     data,
   );
   return {
@@ -59,12 +61,12 @@ export const exportApiKey = (
   encode(JSON.stringify(key))
 );
 
-export const isValidSignedApiKey = (
+export const isValidSignedApiKey = async (
   apiKey: RawSignedApiKey,
 ): Promise<boolean> => (
   crypto.subtle.verify(
     hmacKeyAlgorithm,
-    hmacKey,
+    await getHmacKey(),
     decode(apiKey.signature),
     decode(apiKey.content),
   )
