@@ -2,6 +2,7 @@ name: "Commit checks"
 on: [push]
 jobs:
   typecheck:
+    name: 'Typecheck smith.pizza'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

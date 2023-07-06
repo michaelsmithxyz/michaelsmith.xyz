@@ -76,7 +76,7 @@ export const config = (
 export const requireConfig = (
   key: keyof Config,
 ) => {
-  if (config(key)) {
+  if (config(key) === '') {
     throw new Error(`${key} is required`);
   }
 };
