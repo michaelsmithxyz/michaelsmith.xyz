@@ -5,6 +5,8 @@ on:
       - master
     paths:
       - smith.pizza/**
+      - .github/workflows/deploy-smith-pizza.yml
+
 jobs:
   deploy:
     name: Deploy
