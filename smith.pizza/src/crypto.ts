@@ -1,8 +1,4 @@
-import {
-  crypto,
-  decode,
-  encode,
-} from './deps/std.ts';
+import { crypto, decode, encode } from './deps/std.ts';
 import { config } from './config.ts';
 
 export const hmacKeyAlgorithm: HmacImportParams = {

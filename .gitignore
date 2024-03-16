@@ -2,17 +2,11 @@
 .idea/
 .vscode/
 
+_fresh/
 dist/
 node_modules/
 
 .env
-
-*/.yarn/*
-!*/.yarn/releases
-!*/.yarn/plugins
-.pnp.*
-
-.parcel-cache/
 
 *.log
 

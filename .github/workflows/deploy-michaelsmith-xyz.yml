@@ -1,0 +1,29 @@
+name: Deploy michaelsmith.xyz
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - michaelsmith.xyz/**
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - run: make michaelsmith.xyz/build
+
+      - uses: denoland/deployctl@v1
+        with:
+          project: msmithxyz-homepage
+          entrypoint: ./michaelsmith.xyz/main.ts
+          root: ./michaelsmith.xyz
