@@ -1,10 +1,4 @@
-import {
-  Application,
-  Request,
-  Response,
-  Router,
-  Status,
-} from './deps/deps.ts';
+import { Application, Request, Response, Router, Status } from './deps/deps.ts';
 import { config } from './config.ts';
 import { apiKeyHasRole } from './auth.ts';
 import {
@@ -105,8 +99,6 @@ const indexContent = `
 </html>
 `;
 
-
-
 export const makeApp = (): Application => {
   const store = getStore();
   const app = new Application();
@@ -116,33 +108,33 @@ export const makeApp = (): Application => {
     response.type = 'html';
     response.body = indexContent;
   });
-  
+
   router.get('/:key', async ({ params, response }) => {
     const {
       key,
     } = params;
-  
+
     const url = await getRedirect(
       store,
       key,
     );
-  
+
     if (!url) {
       return notFound(response);
     }
-  
+
     console.info(`Redirect request: "${key}" => "${url}"`);
     return permanentRedirect(
       response,
       url,
     );
   });
-  
+
   router.put('/:key', async ({ params, request, response }) => {
     if (!(await isAuthenticatedAsAdmin(request))) {
       return forbidden(response);
     }
-  
+
     const {
       key,
     } = params;
@@ -153,39 +145,39 @@ export const makeApp = (): Application => {
     if (keyExists) {
       return conflict(response);
     }
-  
+
     const body = request.body({ type: 'json' });
     const value = await body.value;
     if (!isCreateRedirectMessage(value)) {
       return badRequest(response);
     }
-  
+
     console.info(`Setting redirect: "${key}" => "${value.target}"`);
     await setRedirect(
       store,
       key,
       value.target,
     );
-  
+
     return created(
       response,
       { location: key },
     );
   });
-  
+
   router.post('/', async ({ request, response }) => {
     if (!(await isAuthenticatedAsAdmin(request))) {
       return forbidden(response);
     }
-  
+
     const body = request.body({ type: 'json' });
     const value = await body.value;
     if (!isCreateRedirectMessage(value)) {
       return badRequest(response);
     }
-  
+
     const key = generateRedirectID();
-  
+
     console.info(`Setting redirect: "${key}" => "${value.target}"`);
     await setRedirect(
       store,
@@ -197,7 +189,7 @@ export const makeApp = (): Application => {
       { location: key },
     );
   });
-  
+
   app.use(router.routes());
   app.use(router.allowedMethods());
 

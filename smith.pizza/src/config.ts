@@ -21,7 +21,7 @@ type Config = ReturnType<typeof makeConfig>;
 const makeConfig = () => ({
   port: orDefault(
     'SMITH_PIZZA_PORT',
-    '8000'
+    '8000',
   ),
   apiKeyHeader: 'X-Api-Key',
   hmacKey: require('SMITH_PIZZA_HMAC_KEY'),
@@ -63,13 +63,11 @@ const makeConfig = () => ({
   ),
 });
 
-
-
 export const loadConfig = async (
   envPath?: string,
 ) => {
   await load({ envPath, export: true });
-}
+};
 
 export const config = (
   key: keyof Config,

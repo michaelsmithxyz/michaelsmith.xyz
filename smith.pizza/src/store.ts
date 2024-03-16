@@ -1,14 +1,11 @@
 import { decode } from './deps/std.ts';
 import {
   Pool,
-  type TLSOptions,
   type QueryArguments,
   type QueryObjectResult,
+  type TLSOptions,
 } from './deps/deps.ts';
-import {
-  config,
-  requireConfig,
-} from './config.ts';
+import { config, requireConfig } from './config.ts';
 import { Maybe } from './types.ts';
 import { unreachable } from './utils.ts';
 
@@ -51,7 +48,7 @@ export class InMemoryStore implements Store {
 const decodeCertificate = (encoded: string) => {
   const decoded = decode(encoded);
   return (new TextDecoder()).decode(decoded);
-}
+};
 
 export class PostgresStore implements Store {
   #pool: Pool;

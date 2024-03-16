@@ -1,13 +1,5 @@
 {
     "unstable": ["kv"],
-    "tasks": {
-      "generateHmacKey": "deno run --allow-env scripts/generateHmacKey.ts",
-      "validateApiKey": "deno run --allow-env scripts/validateApiKey.ts",
-      "generateApiKey": "deno run --allow-env scripts/generateApiKey.ts",
-      "setupPostgres": "deno run --allow-read --allow-env --allow-net scripts/setupPostgres.ts",
-      "run": "deno run --allow-env --allow-net --allow-read src/main.ts",
-      "deploy": "sh scripts/deploy.sh"
-    },
     "lint": {
       "include": ["src/", "scripts/"],
       "rules": {
