@@ -1,8 +1,5 @@
 name: Check michaelsmith.xyz
-on:
-  push:
-    paths:
-      - michaelsmith.xyz/**
+on: [push]
 jobs:
   typecheck:
     name: Check

@@ -1,8 +1,5 @@
 name: Check smith.pizza
-on:
-  push:
-    paths:
-      - smith.pizza/**
+on: [push]
 jobs:
   typecheck:
     name: Check
