@@ -57,6 +57,10 @@ const makeConfig = () => ({
     'SMITH_PIZZA_POSTGRES_CERTIFICATE',
     '',
   ),
+  kvPath: orDefault(
+    'SMITH_PIZZA_KV_PATH',
+    '',
+  ),
 });
 
 

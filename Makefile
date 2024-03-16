@@ -1,7 +1,7 @@
 error:
 	@echo 'Target required'
 
-DENO_PERMISSIONS=--allow-read --allow-env --allow-net
+DENO_PERMISSIONS=--allow-read --allow-write --allow-env --allow-net
 DENO_RUN=deno run ${DENO_PERMISSIONS}
 
 SMITH_PIZZA_BASE=./smith.pizza
