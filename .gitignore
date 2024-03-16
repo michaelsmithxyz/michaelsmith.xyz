@@ -4,6 +4,7 @@
 
 _fresh/
 dist/
+node_modules/
 
 .env
 
