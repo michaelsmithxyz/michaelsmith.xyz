@@ -5,6 +5,7 @@ on:
       - master
     paths:
       - michaelsmith.xyz/**
+      - .github/workflows/deploy-michaelsmith-xyz.yml
 
 jobs:
   deploy:
