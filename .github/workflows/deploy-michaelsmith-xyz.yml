@@ -29,5 +29,6 @@ jobs:
           entrypoint: ./src/main.tsx
           root: ./michaelsmith.xyz
           include: |
+            deno.json
             src
             static
