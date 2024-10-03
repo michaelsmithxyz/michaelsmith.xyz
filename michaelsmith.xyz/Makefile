@@ -2,12 +2,17 @@ error:
 	@echo 'Target required'
 
 check:
-	@deno fmt --check **/*.ts **/*.tsx
+	@deno fmt --check src/**/*.ts src/**/*.tsx
 	@deno lint
-	@deno check $(wildcard *.ts **/*.ts **/*.tsx)
+	@deno check $(wildcard m**/*.ts **/*.tsx)
 
-build:
-	@deno run -A dev.ts build
+build: build-tailwind
 
-run:
-	@deno run -A --watch=static/,routes/ dev.ts
+build-tailwind:
+	@deno run -A npm:tailwindcss \
+		--minify \
+		--input src/tailwind/styles.css \
+		--output static/styles.css
+
+run: build
+	@deno run -A src/main.tsx
