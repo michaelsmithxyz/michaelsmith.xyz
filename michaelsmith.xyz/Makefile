@@ -9,7 +9,7 @@ check:
 build: build-tailwind
 
 build-tailwind:
-	@deno run -A npm:tailwindcss \
+	@deno run -A npm:tailwindcss@3.4.1 \
 		--minify \
 		--input src/tailwind/styles.css \
 		--output static/styles.css
