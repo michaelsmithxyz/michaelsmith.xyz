@@ -1,4 +1,5 @@
 import { assetRef } from './middleware/assets.ts';
+import { bucketRef } from './utils/bucket.ts';
 
 export const Home = () => {
   const currentYear = (new Date()).getFullYear();
@@ -100,7 +101,7 @@ export const Home = () => {
                     hover:text-blue-600 hover:border-blue-600
                     transition-all
                   '
-                  href={assetRef('resume-michael-smith-current.pdf')}
+                  href={bucketRef('resume-michael-smith.pdf')}
                 >
                   Résumé
                 </a>
