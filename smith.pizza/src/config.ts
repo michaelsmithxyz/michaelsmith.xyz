@@ -1,7 +1,5 @@
 import { load } from '@std/dotenv';
 
-await load({ export: true });
-
 const require = (key: string): string => {
   const val = Deno.env.get(key);
   if (val === undefined) {

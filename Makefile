@@ -13,6 +13,9 @@ check:
 fmt:
 	@deno fmt
 
+test:
+	@deno test -A
+
 smith.pizza/run:
 	@deno run -A smith.pizza/src/main.ts
 
