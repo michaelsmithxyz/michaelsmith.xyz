@@ -27,9 +27,10 @@ jobs:
       - uses: denoland/deployctl@v1
         with:
           project: msmithxyz-homepage
-          entrypoint: ./src/main.tsx
-          root: ./michaelsmith.xyz
+          entrypoint: michaelsmith.xyz/src/main.tsx
+          root: .
           include: |
             deno.json
-            src
-            static
+            michaelsmith.xyz/deno.json
+            michaelsmith.xyz/src
+            michaelsmith.xyz/static

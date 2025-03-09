@@ -23,8 +23,8 @@ jobs:
       - uses: denoland/deployctl@v1
         with:
           project: smith-pizza
-          root: ./smith.pizza/
-          entrypoint: ./src/main.ts
+          entrypoint: smith.pizza/src/main.ts
           include: |
             deno.json
-            src
+            smith.pizza/deno.json
+            smith.pizza/src
