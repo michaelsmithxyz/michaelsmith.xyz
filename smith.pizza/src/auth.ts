@@ -1,4 +1,4 @@
-import { decode } from './deps/std.ts';
+import { decodeBase64 } from '@std/encoding/base64';
 import { isRawSignedApiKey, isValidSignedApiKey } from './crypto.ts';
 import { Maybe } from './types.ts';
 
@@ -28,7 +28,7 @@ export const apiKeyToUser = async (
 ): Promise<Maybe<User>> => {
   try {
     const decoder = new TextDecoder();
-    const parsedKey = JSON.parse(decoder.decode(decode(apiKey)));
+    const parsedKey = JSON.parse(decoder.decode(decodeBase64(apiKey)));
     if (!isRawSignedApiKey(parsedKey)) {
       return undefined;
     }
@@ -38,7 +38,7 @@ export const apiKeyToUser = async (
       return undefined;
     }
 
-    const parsed = JSON.parse(decoder.decode(decode(parsedKey.content)));
+    const parsed = JSON.parse(decoder.decode(decodeBase64(parsedKey.content)));
     if (!isUser(parsed)) {
       return undefined;
     }

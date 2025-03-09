@@ -5,6 +5,7 @@ on:
       - master
     paths:
       - michaelsmith.xyz/**
+      - deno.json
       - .github/workflows/deploy-michaelsmith-xyz.yml
 
 jobs:
@@ -18,9 +19,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.41.3
+          deno-version: v2.2.3
       - run: make michaelsmith.xyz/build
 
       - uses: denoland/deployctl@v1

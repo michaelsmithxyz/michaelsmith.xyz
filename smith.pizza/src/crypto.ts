@@ -1,4 +1,5 @@
-import { crypto, decode, encode } from './deps/std.ts';
+import { crypto } from '@std/crypto';
+import { decodeBase64, encodeBase64 } from '@std/encoding';
 import { config } from './config.ts';
 
 export const hmacKeyAlgorithm: HmacImportParams = {
@@ -46,15 +47,15 @@ export const signApiKey = async (
     data,
   );
   return {
-    content: encode(data),
-    signature: encode(signature),
+    content: encodeBase64(data),
+    signature: encodeBase64(signature),
   };
 };
 
 export const exportApiKey = (
   key: RawSignedApiKey,
 ) => (
-  encode(JSON.stringify(key))
+  encodeBase64(JSON.stringify(key))
 );
 
 export const isValidSignedApiKey = async (
@@ -63,7 +64,7 @@ export const isValidSignedApiKey = async (
   crypto.subtle.verify(
     hmacKeyAlgorithm,
     await getHmacKey(),
-    decode(apiKey.signature),
-    decode(apiKey.content),
+    decodeBase64(apiKey.signature),
+    decodeBase64(apiKey.content),
   )
 );

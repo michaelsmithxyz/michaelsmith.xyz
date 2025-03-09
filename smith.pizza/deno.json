@@ -1,15 +1,5 @@
 {
-    "unstable": ["kv"],
-    "lint": {
-      "include": ["src/", "scripts/"],
-      "rules": {
-        "tags": ["recommended"]
-      }
-    },
-    "fmt": {
-        "include": ["src/", "scripts/"],
-        "indentWidth": 2,
-        "semiColons": true,
-        "singleQuote": true
-    }
+  "imports": {
+    "nanoid": "https://deno.land/x/nanoid@v3.0.0/mod.ts"
   }
+}

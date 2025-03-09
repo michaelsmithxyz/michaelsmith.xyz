@@ -1,0 +1,37 @@
+{
+  "workspace": [
+    "./michaelsmith.xyz",
+    "./smith.pizza"
+  ],
+  "lock": true,
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    }
+  },
+  "fmt": {
+    "include": [
+      "michaelsmith.xyz/src/",
+      "smith.pizza/src/",
+      "smith.pizza/scripts/"
+    ],
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": true
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  },
+  "nodeModulesDir": "auto",
+  "unstable": ["kv"],
+  "imports": {
+    "@oak/oak": "jsr:@oak/oak@^17.0.0",
+    "@std/cli": "jsr:@std/cli@^1.0.14",
+    "@std/crypto": "jsr:@std/crypto@^1.0.4",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
+    "@std/encoding": "jsr:@std/encoding@^1.0.7"
+  }
+}

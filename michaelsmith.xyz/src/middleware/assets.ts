@@ -1,5 +1,7 @@
 import { Middleware } from '@oak/oak';
 
+const staticRoot = new URL(import.meta.resolve('@static')).pathname;
+
 export const assetsMiddleware = (): Middleware => (
   async (ctx, next) => {
     if (ctx.request.url.pathname.startsWith('/static')) {
@@ -7,7 +9,7 @@ export const assetsMiddleware = (): Middleware => (
         const path = ctx.request.url.pathname.replace(/^\/static\//, '');
         await ctx.send({
           path,
-          root: `${Deno.cwd()}/static/`,
+          root: staticRoot,
         });
         return;
       } catch (error) {
