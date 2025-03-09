@@ -34,3 +34,10 @@ export const setRedirect = async (
 ): Promise<void> => {
   await store.set(storeKey(key), target);
 };
+
+export const deleteRedirect = async (
+  store: Store,
+  key: string,
+): Promise<void> => {
+  await store.delete(storeKey(key));
+};
