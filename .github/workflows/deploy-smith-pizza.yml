@@ -5,6 +5,7 @@ on:
       - master
     paths:
       - smith.pizza/**
+      - deno.json
       - .github/workflows/deploy-smith-pizza.yml
 
 jobs:
@@ -16,12 +17,14 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
-      - run: make smith.pizza/build
+          deno-version: v2.2.3
       - uses: denoland/deployctl@v1
         with:
           project: smith-pizza
-          root: ./smith.pizza/dist/
-          entrypoint: smith-pizza.ts
+          root: ./smith.pizza/
+          entrypoint: ./src/main.ts
+          include: |
+            deno.json
+            src

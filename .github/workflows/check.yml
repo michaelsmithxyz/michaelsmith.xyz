@@ -1,4 +1,4 @@
-name: Check smith.pizza
+name: Check
 on: [push]
 jobs:
   typecheck:
@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
-      - run: make smith.pizza/check
+          deno-version: v2.2.3
+      - run: make check

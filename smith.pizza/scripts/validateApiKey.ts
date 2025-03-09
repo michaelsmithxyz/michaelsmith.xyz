@@ -1,7 +1,7 @@
-import { parse } from '../src/deps/std.ts';
+import { parseArgs } from '@std/cli/parse-args';
 import { apiKeyToUser } from '../src/auth.ts';
 
-const flags = parse(Deno.args, {
+const flags = parseArgs(Deno.args, {
   string: ['key'],
 });
 

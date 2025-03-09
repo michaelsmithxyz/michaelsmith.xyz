@@ -1,5 +1,5 @@
-import { encode } from './deps/std.ts';
-import { nanoid } from './deps/deps.ts';
+import { nanoid } from 'nanoid';
+import { encodeBase64 } from '@std/encoding';
 import { Maybe } from './types.ts';
 import { Store } from './store.ts';
 
@@ -10,7 +10,7 @@ export const generateRedirectID = () => (
 const storeKey = (
   key: string,
 ): string => (
-  encode(key)
+  encodeBase64(key)
 );
 
 export const getRedirect = async (

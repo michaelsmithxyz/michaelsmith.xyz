@@ -1,4 +1,4 @@
-import { Application, Request, Response, Router, Status } from './deps/deps.ts';
+import { Application, Request, Response, Router, Status } from '@oak/oak';
 import { config } from './config.ts';
 import { apiKeyHasRole } from './auth.ts';
 import {
@@ -146,17 +146,16 @@ export const makeApp = (): Application => {
       return conflict(response);
     }
 
-    const body = request.body({ type: 'json' });
-    const value = await body.value;
-    if (!isCreateRedirectMessage(value)) {
+    const body = await request.body.json();
+    if (!isCreateRedirectMessage(body)) {
       return badRequest(response);
     }
 
-    console.info(`Setting redirect: "${key}" => "${value.target}"`);
+    console.info(`Setting redirect: "${key}" => "${body.target}"`);
     await setRedirect(
       store,
       key,
-      value.target,
+      body.target,
     );
 
     return created(
@@ -170,19 +169,18 @@ export const makeApp = (): Application => {
       return forbidden(response);
     }
 
-    const body = request.body({ type: 'json' });
-    const value = await body.value;
-    if (!isCreateRedirectMessage(value)) {
+    const body = await request.body.json();
+    if (!isCreateRedirectMessage(body)) {
       return badRequest(response);
     }
 
     const key = generateRedirectID();
 
-    console.info(`Setting redirect: "${key}" => "${value.target}"`);
+    console.info(`Setting redirect: "${key}" => "${body.target}"`);
     await setRedirect(
       store,
       key,
-      value.target,
+      body.target,
     );
     return created(
       response,

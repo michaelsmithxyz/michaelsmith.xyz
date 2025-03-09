@@ -1,4 +1,4 @@
-import { crypto } from '../src/deps/std.ts';
+import { crypto } from '@std/crypto';
 import { hmacKeyAlgorithm, hmacKeyUsages } from '../src/crypto.ts';
 
 const key = await crypto.subtle.generateKey(

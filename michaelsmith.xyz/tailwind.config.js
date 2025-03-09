@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   content: [
     '**/*.{ts,tsx}',
   ],
@@ -7,4 +7,3 @@ module.exports = {
   },
   plugins: [],
 }
-

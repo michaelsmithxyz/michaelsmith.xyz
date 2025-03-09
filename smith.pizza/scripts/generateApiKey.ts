@@ -1,7 +1,7 @@
-import { parse } from '../src/deps/std.ts';
+import { parseArgs } from '@std/cli/parse-args';
 import { exportApiKey, signApiKey } from '../src/crypto.ts';
 
-const flags = parse(Deno.args, {
+const flags = parseArgs(Deno.args, {
   string: ['data'],
 });
 

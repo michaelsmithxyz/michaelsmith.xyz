@@ -1,4 +1,4 @@
-import { load } from './deps/std.ts';
+import { load } from '@std/dotenv';
 
 await load({ export: true });
 
@@ -21,41 +21,13 @@ type Config = ReturnType<typeof makeConfig>;
 const makeConfig = () => ({
   port: orDefault(
     'SMITH_PIZZA_PORT',
-    '8000',
+    '1997',
   ),
   apiKeyHeader: 'X-Api-Key',
   hmacKey: require('SMITH_PIZZA_HMAC_KEY'),
   store: orDefault(
     'SMITH_PIZZA_STORE',
     'memory',
-  ),
-  postgresHost: orDefault(
-    'SMITH_PIZZA_POSTGRES_HOST',
-    '',
-  ),
-  postgresPort: orDefault(
-    'SMITH_PIZZA_POSTGRES_PORT',
-    '',
-  ),
-  postgresDatabase: orDefault(
-    'SMITH_PIZZA_POSTGRES_DATABASE',
-    '',
-  ),
-  postgresUser: orDefault(
-    'SMITH_PIZZA_POSTGRES_USER',
-    '',
-  ),
-  postgresPassword: orDefault(
-    'SMITH_PIZZA_POSTGRES_PASSWORD',
-    '',
-  ),
-  postgresTable: orDefault(
-    'SMITH_PIZZA_POSTGRES_TABLE',
-    'smith-pizza',
-  ),
-  postgresCertificate: orDefault(
-    'SMITH_PIZZA_POSTGRES_CERTIFICATE',
-    '',
   ),
   kvPath: orDefault(
     'SMITH_PIZZA_KV_PATH',
@@ -74,11 +46,3 @@ export const config = (
 ): string => (
   makeConfig()[key]
 );
-
-export const requireConfig = (
-  key: keyof Config,
-) => {
-  if (config(key) === '') {
-    throw new Error(`${key} is required`);
-  }
-};
