@@ -2,6 +2,7 @@ import { Application, Request, Response, Router, Status } from '@oak/oak';
 import { config } from './config.ts';
 import { apiKeyHasRole } from './auth.ts';
 import {
+  deleteRedirect,
   generateRedirectID,
   getRedirect,
   hasRedirect,
@@ -61,6 +62,12 @@ const created = (
 ) => {
   response.status = Status.Created;
   response.body = body;
+};
+
+const deleted = (
+  response: Response,
+) => {
+  response.status = Status.NoContent;
 };
 
 const forbidden = (
@@ -161,6 +168,33 @@ export const makeApp = (): Application => {
     return created(
       response,
       { location: key },
+    );
+  });
+
+  router.delete('/:key', async ({ params, request, response }) => {
+    if (!(await isAuthenticatedAsAdmin(request))) {
+      return forbidden(response);
+    }
+
+    const {
+      key,
+    } = params;
+    const keyExists = await hasRedirect(
+      store,
+      key,
+    );
+    if (!keyExists) {
+      return notFound(response);
+    }
+
+    console.info(`Deleting redirect: "${key}"`);
+    await deleteRedirect(
+      store,
+      key,
+    );
+
+    return deleted(
+      response,
     );
   });
 

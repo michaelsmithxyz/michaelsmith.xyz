@@ -11,6 +11,8 @@ export interface Store {
 
   set(key: string, value: string): Promise<void>;
 
+  delete(key: string): Promise<void>;
+
   has(key: string): Promise<boolean>;
 }
 
@@ -29,6 +31,11 @@ export class InMemoryStore implements Store {
   // deno-lint-ignore require-await
   async set(key: string, value: string) {
     this.#map.set(key, value);
+  }
+
+  // deno-lint-ignore require-await
+  async delete(key: string) {
+    this.#map.delete(key);
   }
 
   // deno-lint-ignore require-await
@@ -69,6 +76,11 @@ export class KvStore implements Store {
   async set(key: string, value: string) {
     const kv = await this.#getKv();
     await kv.set(this.#makeKey(key), value);
+  }
+
+  async delete(key: string) {
+    const kv = await this.#getKv();
+    await kv.delete(this.#makeKey(key));
   }
 
   async has(key: string): Promise<boolean> {
