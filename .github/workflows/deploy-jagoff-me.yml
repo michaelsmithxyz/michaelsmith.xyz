@@ -4,9 +4,9 @@ on:
     branches:
       - master
     paths:
-      - smith.pizza/**
+      - jagoff.me/**
       - deno.json
-      - .github/workflows/deploy-smith-pizza.yml
+      - .github/workflows/deploy-jagoff-me.yml
 
 jobs:
   deploy:
@@ -22,12 +22,11 @@ jobs:
           deno-version: v2.4.3
       - uses: denoland/deployctl@v1
         with:
-          project: smith-pizza
-          entrypoint: smith.pizza/src/main.ts
+          project: jagoff-me
+          entrypoint: jagoff.me/src/main.ts
           include: |
             deno.json
-            smith.pizza/deno.json
-            smith.pizza/src
-            michaelsmith.xyz/deno.json
+            jagoff.me/deno.json
+            jagoff.me/src
           exclude: |
             **/*.test.ts
