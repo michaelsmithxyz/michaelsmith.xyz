@@ -35,5 +35,6 @@ jobs:
             michaelsmith.xyz/src
             michaelsmith.xyz/static
             smith.pizza/deno.json
+            jagoff.me/deno.json
           exclude: |
             **/*.test.ts

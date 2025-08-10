@@ -1,4 +1,4 @@
-name: Deploy smith.pizza
+name: Deploy jagoff.me
 on:
   push:
     branches:
@@ -28,5 +28,7 @@ jobs:
             deno.json
             jagoff.me/deno.json
             jagoff.me/src
+            michaelsmith.xyz/deno.json
+            smith.pizza/deno.json
           exclude: |
             **/*.test.ts

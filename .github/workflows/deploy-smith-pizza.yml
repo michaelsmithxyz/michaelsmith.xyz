@@ -29,5 +29,6 @@ jobs:
             smith.pizza/deno.json
             smith.pizza/src
             michaelsmith.xyz/deno.json
+            jagoff.me/deno.json
           exclude: |
             **/*.test.ts
