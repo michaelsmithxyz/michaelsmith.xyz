@@ -8,7 +8,8 @@ check:
 		michelsmith.xyz/src/**/*.ts \
 		michelsmith.xyz/src/**/*.tsx \
 		smith.pizza/src/**/*.ts \
-		smith.pizza/scripts/**/*.ts
+		smith.pizza/scripts/**/*.ts \
+		jagoff.me/src/**/*.ts
 
 fmt:
 	@deno fmt
@@ -28,3 +29,6 @@ michaelsmith.xyz/build:
 
 michaelsmith.xyz/run: michaelsmith.xyz/build
 	@deno run -A michaelsmith.xyz/src/main.tsx
+
+jagoff.me/run:
+	@deno run -A jagoff.me/src/main.ts
