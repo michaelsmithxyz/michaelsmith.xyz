@@ -1,0 +1,102 @@
+name: Workflow
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d
+        with:
+          version: 10.33.0
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.4.3
+      - run: |
+          pnpm i --frozen-lockfile
+          make check
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.4.3
+      - run: make test
+
+  deploy-dev:
+    name: Deploy Cloudflare dev
+    if: github.event_name == 'workflow_dispatch'
+    needs: [check, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d
+        with:
+          version: 10.33.0
+      - env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          pnpm i --frozen-lockfile
+          make michaelsmith.xyz/deploy
+
+  deploy-smith-pizza:
+    name: Deploy smith.pizza
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: [check, test]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.4.3
+      - uses: denoland/deployctl@v1
+        with:
+          project: smith-pizza
+          entrypoint: smith.pizza/src/main.ts
+          include: |
+            deno.json
+            smith.pizza/deno.json
+            smith.pizza/src
+            michaelsmith.xyz/deno.json
+            jagoff.me/deno.json
+          exclude: |
+            **/*.test.ts
+
+  deploy-jagoff-me:
+    name: Deploy jagoff.me
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: [check, test]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.4.3
+      - uses: denoland/deployctl@v1
+        with:
+          project: jagoff-me
+          entrypoint: jagoff.me/src/main.ts
+          include: |
+            deno.json
+            jagoff.me/deno.json
+            jagoff.me/src
+            michaelsmith.xyz/deno.json
+            smith.pizza/deno.json
+          exclude: |
+            **/*.test.ts

@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "michaelsmith-xyz",
+  "main": "src/main.tsx",
+  "compatibility_date": "2026-05-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./static",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "workers_dev": true,
+  "env": {
+    "prod": {}
+  }
+}

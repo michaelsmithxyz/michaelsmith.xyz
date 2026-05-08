@@ -5,11 +5,10 @@ check:
 	@deno fmt --check
 	@deno lint
 	@deno check \
-		michelsmith.xyz/src/**/*.ts \
-		michelsmith.xyz/src/**/*.tsx \
 		smith.pizza/src/**/*.ts \
 		smith.pizza/scripts/**/*.ts \
 		jagoff.me/src/**/*.ts
+	@pnpm --filter "michaelsmith.xyz" exec -- tsc
 
 fmt:
 	@deno fmt
@@ -20,15 +19,23 @@ test:
 smith.pizza/run:
 	@deno run -A smith.pizza/src/main.ts
 
-michaelsmith.xyz/build:
-	@deno run -A npm:tailwindcss@3.4.1 \
-		--config michaelsmith.xyz/tailwind.config.js \
+michaelsmith.xyz/codegen:
+	@pnpm --filter "michaelsmith.xyz" exec -- wrangler types
+
+michaelsmith.xyz/build: export BROWSERSLIST_IGNORE_OLD_DATA := true
+michaelsmith.xyz/build: michaelsmith.xyz/codegen
+	@pnpm --filter "michaelsmith.xyz" exec -- tailwindcss \
+		--config tailwind.config.js \
 		--minify \
-		--input michaelsmith.xyz/src/tailwind/styles.css \
-		--output michaelsmith.xyz/static/styles.css
+		--input src/tailwind/styles.css \
+		--output static/styles.css
 
 michaelsmith.xyz/run: michaelsmith.xyz/build
-	@deno run -A michaelsmith.xyz/src/main.tsx
+	@pnpm --filter "michaelsmith.xyz" exec -- wrangler dev
+
+DEPLOY_ENV ?= ""
+michaelsmith.xyz/deploy: michaelsmith.xyz/build
+	@CLOUDFLARE_ENV=$(DEPLOY_ENV) pnpm --filter "michaelsmith.xyz" exec -- wrangler deploy
 
 jagoff.me/run:
 	@deno run -A jagoff.me/src/main.ts

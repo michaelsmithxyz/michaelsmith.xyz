@@ -1,0 +1,19 @@
+{
+  "name": "michaelsmith.xyz",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@oak/oak": "jsr:^17.2.0",
+    "preact": "^10.29.1",
+    "preact-render-to-string": "^6.6.7"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.90.0"
+  }
+}
