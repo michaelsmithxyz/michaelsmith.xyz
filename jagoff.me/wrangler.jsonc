@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "jagoff-me",
+  "main": "src/main.ts",
+  "compatibility_date": "2026-05-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "dev.jagoff.me",
+      "custom_domain": true
+    }
+  ],
+  "env": {
+    "prod": {
+      "routes": [
+        {
+          "pattern": "jagoff.me",
+          "custom_domain": true
+        },
+        {
+          "pattern": "www.jagoff.me",
+          "custom_domain": true
+        }
+      ]
+    }
+  }
+}

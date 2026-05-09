@@ -3,13 +3,14 @@ error:
 
 check:
 	@deno fmt --check
-	@deno lint
+	@deno lint --ignore=**/worker-configuration.d.ts
 	@deno check \
 		smith.pizza/src/**/*.ts \
-		smith.pizza/scripts/**/*.ts \
-		jagoff.me/src/**/*.ts
+		smith.pizza/scripts/**/*.ts
 	@pnpm --filter "michaelsmith.xyz" exec -- tsc
 	@pnpm --filter "michaelsmith.xyz" exec -- wrangler types --check
+	@pnpm --filter "jagoff.me" exec -- tsc
+	@pnpm --filter "jagoff.me" exec -- wrangler types --check
 
 fmt:
 	@deno fmt
@@ -38,5 +39,11 @@ DEPLOY_ENV ?= ""
 michaelsmith.xyz/deploy: michaelsmith.xyz/build
 	@CLOUDFLARE_ENV=$(DEPLOY_ENV) pnpm --filter "michaelsmith.xyz" exec -- wrangler deploy
 
+jagoff.me/codegen:
+	@pnpm --filter "jagoff.me" exec -- wrangler types
+
 jagoff.me/run:
-	@deno run -A jagoff.me/src/main.ts
+	@pnpm --filter "jagoff.me" exec -- wrangler dev
+
+jagoff.me/deploy:
+	@CLOUDFLARE_ENV=$(DEPLOY_ENV) pnpm --filter "jagoff.me" exec -- wrangler deploy

@@ -32,7 +32,7 @@ jobs:
       - run: make test
 
   deploy-dev:
-    name: Deploy Cloudflare dev
+    name: Deploy michaelsmith.xyz dev
     if: github.event_name == 'workflow_dispatch'
     needs: [check, test]
     runs-on: ubuntu-latest
@@ -46,7 +46,7 @@ jobs:
           make michaelsmith.xyz/deploy
 
   deploy-prod:
-    name: Deploy Cloudflare prod
+    name: Deploy michaelsmith.xyz prod
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: [check, test]
     runs-on: ubuntu-latest
@@ -81,33 +81,34 @@ jobs:
             deno.json
             smith.pizza/deno.json
             smith.pizza/src
-            michaelsmith.xyz/deno.json
-            jagoff.me/deno.json
           exclude: |
             **/*.test.ts
 
-  deploy-jagoff-me:
-    name: Deploy jagoff.me
+  deploy-jagoff-me-dev:
+    name: Deploy jagoff.me dev
+    if: github.event_name == 'workflow_dispatch'
+    needs: [check, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-pnpm
+      - env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          pnpm i --frozen-lockfile
+          make jagoff.me/deploy
+
+  deploy-jagoff-me-prod:
+    name: Deploy jagoff.me prod
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: [check, test]
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - uses: actions/checkout@v6
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.4.3
-      - uses: denoland/deployctl@v1
-        with:
-          project: jagoff-me
-          entrypoint: jagoff.me/src/main.ts
-          include: |
-            deno.json
-            jagoff.me/deno.json
-            jagoff.me/src
-            michaelsmith.xyz/deno.json
-            smith.pizza/deno.json
-          exclude: |
-            **/*.test.ts
+      - uses: ./.github/actions/setup-pnpm
+      - env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          pnpm i --frozen-lockfile
+          export DEPLOY_ENV="prod"
+          make jagoff.me/deploy

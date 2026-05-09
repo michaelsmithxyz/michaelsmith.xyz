@@ -1,7 +1,6 @@
 {
   "workspace": [
-    "./smith.pizza",
-    "./jagoff.me"
+    "./smith.pizza"
   ],
   "lock": true,
   "lint": {
@@ -14,8 +13,7 @@
   "fmt": {
     "include": [
       "smith.pizza/src/",
-      "smith.pizza/scripts/",
-      "jagoff.me/src/"
+      "smith.pizza/scripts/"
     ],
     "indentWidth": 2,
     "semiColons": true,
