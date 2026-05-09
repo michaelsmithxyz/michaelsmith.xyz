@@ -1,5 +1,4 @@
 import { Application, Request, Response, Router, Status } from '@oak/oak';
-import { config } from './config.ts';
 import { apiKeyHasRole } from './auth.ts';
 import {
   deleteRedirect,
@@ -11,22 +10,22 @@ import {
 import { getStore } from './store.ts';
 import { Maybe } from './types.ts';
 
+const API_KEY_HEADER = 'X-Api-Key';
+
 type CreateRedirectMessage = {
   target: string;
 };
 
 const isCreateRedirectMessage = (
-  // deno-lint-ignore no-explicit-any
-  value: any,
+  value: unknown,
 ): value is CreateRedirectMessage => (
   typeof value === 'object' &&
+  value !== null &&
   Object.hasOwn(value, 'target')
 );
 
-const getApiKey = (
-  headers: Headers,
-): Maybe<string> => (
-  headers.get(config('apiKeyHeader')) ?? undefined
+const getApiKey = (headers: Headers): Maybe<string> => (
+  headers.get(API_KEY_HEADER) ?? undefined
 );
 
 const isAuthenticatedAsAdmin = async (
@@ -36,58 +35,39 @@ const isAuthenticatedAsAdmin = async (
   if (!apiKey) {
     return false;
   }
-  return await apiKeyHasRole(
-    apiKey,
-    'admin',
-  );
+  return await apiKeyHasRole(apiKey, 'admin');
 };
 
-const badRequest = (
-  response: Response,
-) => {
+const badRequest = (response: Response) => {
   response.status = Status.BadRequest;
   response.body = 'Bad request';
 };
 
-const conflict = (
-  response: Response,
-) => {
+const conflict = (response: Response) => {
   response.status = Status.Conflict;
   response.body = 'Conflict';
 };
 
-const created = (
-  response: Response,
-  body: Response['body'],
-) => {
+const created = (response: Response, body: Response['body']) => {
   response.status = Status.Created;
   response.body = body;
 };
 
-const deleted = (
-  response: Response,
-) => {
+const deleted = (response: Response) => {
   response.status = Status.NoContent;
 };
 
-const forbidden = (
-  response: Response,
-) => {
+const forbidden = (response: Response) => {
   response.status = Status.Forbidden;
   response.body = 'Forbidden';
 };
 
-const notFound = (
-  response: Response,
-) => {
+const notFound = (response: Response) => {
   response.status = Status.NotFound;
   response.body = 'Not found';
 };
 
-const permanentRedirect = (
-  response: Response,
-  location: string,
-) => {
+const permanentRedirect = (response: Response, location: string) => {
   response.status = Status.PermanentRedirect;
   response.headers.append('Location', location);
 };
@@ -106,8 +86,8 @@ const indexContent = `
 </html>
 `;
 
-export const makeApp = (): Application => {
-  const store = getStore();
+export const makeApp = (env: Env): Application => {
+  const store = getStore(env);
   const app = new Application();
   const router = new Router();
 
@@ -117,24 +97,13 @@ export const makeApp = (): Application => {
   });
 
   router.get('/:key', async ({ params, response }) => {
-    const {
-      key,
-    } = params;
-
-    const url = await getRedirect(
-      store,
-      key,
-    );
-
+    const { key } = params;
+    const url = await getRedirect(store, key);
     if (!url) {
       return notFound(response);
     }
-
     console.info(`Redirect request: "${key}" => "${url}"`);
-    return permanentRedirect(
-      response,
-      url,
-    );
+    return permanentRedirect(response, url);
   });
 
   router.put('/:key', async ({ params, request, response }) => {
@@ -142,14 +111,8 @@ export const makeApp = (): Application => {
       return forbidden(response);
     }
 
-    const {
-      key,
-    } = params;
-    const keyExists = await hasRedirect(
-      store,
-      key,
-    );
-    if (keyExists) {
+    const { key } = params;
+    if (await hasRedirect(store, key)) {
       return conflict(response);
     }
 
@@ -159,16 +122,9 @@ export const makeApp = (): Application => {
     }
 
     console.info(`Setting redirect: "${key}" => "${body.target}"`);
-    await setRedirect(
-      store,
-      key,
-      body.target,
-    );
+    await setRedirect(store, key, body.target);
 
-    return created(
-      response,
-      { location: key },
-    );
+    return created(response, { location: key });
   });
 
   router.delete('/:key', async ({ params, request, response }) => {
@@ -176,26 +132,15 @@ export const makeApp = (): Application => {
       return forbidden(response);
     }
 
-    const {
-      key,
-    } = params;
-    const keyExists = await hasRedirect(
-      store,
-      key,
-    );
-    if (!keyExists) {
+    const { key } = params;
+    if (!(await hasRedirect(store, key))) {
       return notFound(response);
     }
 
     console.info(`Deleting redirect: "${key}"`);
-    await deleteRedirect(
-      store,
-      key,
-    );
+    await deleteRedirect(store, key);
 
-    return deleted(
-      response,
-    );
+    return deleted(response);
   });
 
   router.post('/', async ({ request, response }) => {
@@ -209,17 +154,9 @@ export const makeApp = (): Application => {
     }
 
     const key = generateRedirectID();
-
     console.info(`Setting redirect: "${key}" => "${body.target}"`);
-    await setRedirect(
-      store,
-      key,
-      body.target,
-    );
-    return created(
-      response,
-      { location: key },
-    );
+    await setRedirect(store, key, body.target);
+    return created(response, { location: key });
   });
 
   app.use(router.routes());

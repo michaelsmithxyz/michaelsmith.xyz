@@ -1,25 +1,36 @@
-import { crypto } from '@std/crypto';
-import { decodeBase64, encodeBase64 } from '@std/encoding';
-import { config } from './config.ts';
+import { env } from 'cloudflare:workers';
 
-export const hmacKeyAlgorithm: HmacImportParams = {
+export const hmacKeyAlgorithm: SubtleCryptoImportKeyAlgorithm = {
   name: 'HMAC',
   hash: 'SHA-512',
 };
-export const hmacKeyUsages: KeyUsage[] = [
-  'sign',
-  'verify',
-];
+export const hmacKeyUsages: string[] = ['sign', 'verify'];
 
-const getHmacKey = async () => (
-  await crypto.subtle.importKey(
+const encodeBase64 = (data: ArrayBuffer | Uint8Array | string): string => {
+  if (typeof data === 'string') {
+    return Buffer.from(data, 'utf8').toString('base64');
+  }
+  const view = data instanceof Uint8Array ? data : new Uint8Array(data);
+  return Buffer.from(view).toString('base64');
+};
+
+const decodeBase64 = (data: string): Uint8Array => (
+  new Uint8Array(Buffer.from(data, 'base64'))
+);
+
+const getHmacKey = async () => {
+  const jwk = env.SMITH_PIZZA_HMAC_KEY;
+  if (!jwk) {
+    throw new Error('SMITH_PIZZA_HMAC_KEY is not configured');
+  }
+  return await crypto.subtle.importKey(
     'jwk',
-    JSON.parse(config('hmacKey')),
+    JSON.parse(jwk),
     hmacKeyAlgorithm,
     true,
     hmacKeyUsages,
-  )
-);
+  );
+};
 
 export type RawSignedApiKey = {
   content: string;
@@ -27,20 +38,18 @@ export type RawSignedApiKey = {
 };
 
 export const isRawSignedApiKey = (
-  // deno-lint-ignore no-explicit-any
-  value: any,
+  value: unknown,
 ): value is RawSignedApiKey => (
   typeof value === 'object' &&
-  typeof value.content === 'string' &&
-  typeof value.signature === 'string'
+  value !== null &&
+  typeof (value as RawSignedApiKey).content === 'string' &&
+  typeof (value as RawSignedApiKey).signature === 'string'
 );
 
 export const signApiKey = async (
   content: Record<string, unknown>,
 ): Promise<RawSignedApiKey> => {
-  const serialized = JSON.stringify(content);
-  const encoder = new TextEncoder();
-  const data = encoder.encode(serialized);
+  const data = new TextEncoder().encode(JSON.stringify(content));
   const signature = await crypto.subtle.sign(
     hmacKeyAlgorithm,
     await getHmacKey(),
@@ -52,10 +61,16 @@ export const signApiKey = async (
   };
 };
 
-export const exportApiKey = (
-  key: RawSignedApiKey,
-) => (
+export const exportApiKey = (key: RawSignedApiKey): string => (
   encodeBase64(JSON.stringify(key))
+);
+
+export const importApiKey = (apiKey: string): string => (
+  new TextDecoder().decode(decodeBase64(apiKey))
+);
+
+export const decodeContent = (content: string): string => (
+  new TextDecoder().decode(decodeBase64(content))
 );
 
 export const isValidSignedApiKey = async (

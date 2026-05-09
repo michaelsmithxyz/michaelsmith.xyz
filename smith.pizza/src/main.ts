@@ -1,7 +1,10 @@
+import { env } from 'cloudflare:workers';
 import { makeApp } from './app.ts';
-import { config, loadConfig } from './config.ts';
 
-await loadConfig();
+const app = makeApp(env);
 
-const app = makeApp();
-await app.listen({ port: Number(config('port')) });
+export default {
+  async fetch(request, env, ctx): Promise<Response> {
+    return await app.fetch(request, env as unknown as Record<string, string>, ctx);
+  },
+} satisfies ExportedHandler<Env>;

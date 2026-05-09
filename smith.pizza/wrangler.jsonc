@@ -1,0 +1,43 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "smith-pizza",
+  "main": "src/main.ts",
+  "compatibility_date": "2026-05-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "dev.smith.pizza",
+      "custom_domain": true
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "REDIRECTS",
+      "id": "73a911a0382a40c0a3f4a7ff922d7f46"
+    }
+  ],
+  "secrets": {
+    "required": ["SMITH_PIZZA_HMAC_KEY"]
+  },
+  "env": {
+    "prod": {
+      "routes": [
+        {
+          "pattern": "smith.pizza",
+          "custom_domain": true
+        },
+        {
+          "pattern": "www.smith.pizza",
+          "custom_domain": true
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "REDIRECTS",
+          "id": "426927b70a8b4b35bfe337c2c1f3d06b"
+        }
+      ]
+    }
+  }
+}

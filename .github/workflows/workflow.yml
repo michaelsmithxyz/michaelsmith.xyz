@@ -14,9 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-pnpm
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.4.3
       - run: |
           pnpm i --frozen-lockfile
           make check
@@ -26,10 +23,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.4.3
-      - run: make test
+      - uses: ./.github/actions/setup-pnpm
+      - run: |
+          pnpm i --frozen-lockfile
+          make test
 
   deploy-dev:
     name: Deploy michaelsmith.xyz dev
@@ -60,29 +57,34 @@ jobs:
           export DEPLOY_ENV="prod"
           make michaelsmith.xyz/deploy
 
-  deploy-smith-pizza:
-    name: Deploy smith.pizza
+  deploy-smith-pizza-dev:
+    name: Deploy smith.pizza dev
+    if: github.event_name == 'workflow_dispatch'
+    needs: [check, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-pnpm
+      - env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          pnpm i --frozen-lockfile
+          make smith.pizza/deploy
+
+  deploy-smith-pizza-prod:
+    name: Deploy smith.pizza prod
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: [check, test]
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - uses: actions/checkout@v6
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.4.3
-      - uses: denoland/deployctl@v1
-        with:
-          project: smith-pizza
-          entrypoint: smith.pizza/src/main.ts
-          include: |
-            deno.json
-            smith.pizza/deno.json
-            smith.pizza/src
-          exclude: |
-            **/*.test.ts
+      - uses: ./.github/actions/setup-pnpm
+      - env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          pnpm i --frozen-lockfile
+          export DEPLOY_ENV="prod"
+          make smith.pizza/deploy
 
   deploy-jagoff-me-dev:
     name: Deploy jagoff.me dev

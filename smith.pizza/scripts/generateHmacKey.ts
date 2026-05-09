@@ -1,15 +1,9 @@
-import { crypto } from '@std/crypto';
-import { hmacKeyAlgorithm, hmacKeyUsages } from '../src/crypto.ts';
-
 const key = await crypto.subtle.generateKey(
-  hmacKeyAlgorithm,
+  { name: 'HMAC', hash: 'SHA-512' },
   true,
-  hmacKeyUsages,
+  ['sign', 'verify'],
 );
 
-const exported = await crypto.subtle.exportKey(
-  'jwk',
-  key,
-);
+const exported = await crypto.subtle.exportKey('jwk', key as CryptoKey);
 
 console.log(JSON.stringify(exported));
