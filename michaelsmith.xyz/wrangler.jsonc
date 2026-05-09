@@ -9,8 +9,25 @@
     "binding": "ASSETS",
     "run_worker_first": true
   },
-  "workers_dev": true,
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "dev.michaelsmith.xyz",
+      "custom_domain": true
+    }
+  ],
   "env": {
-    "prod": {}
+    "prod": {
+      "routes": [
+        {
+          "pattern": "michaelsmith.xyz",
+          "custom_domain": true
+        },
+        {
+          "pattern": "www.michaelsmith.xyz",
+          "custom_domain": true
+        }
+      ]
+    }
   }
 }
