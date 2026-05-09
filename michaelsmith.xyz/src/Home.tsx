@@ -1,4 +1,4 @@
-import { assetRef } from './middleware/assets.ts';
+import { assetRef } from './utils/assets.ts';
 import { bucketRef } from './utils/bucket.ts';
 
 export const Home = () => {

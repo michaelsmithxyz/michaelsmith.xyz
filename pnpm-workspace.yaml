@@ -1,0 +1,7 @@
+packages:
+  - michaelsmith.xyz
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  sharp: true
+  workerd: true
