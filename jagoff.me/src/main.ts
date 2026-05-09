@@ -1,4 +1,5 @@
-import { makeApp } from './app.ts';
-
-const app = makeApp();
-await app.listen({ port: 8080 });
+export default {
+  fetch(): Response {
+    return Response.redirect('https://www.jaguars.com', 307);
+  },
+} satisfies ExportedHandler<Env>;

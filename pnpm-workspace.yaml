@@ -1,5 +1,6 @@
 packages:
   - michaelsmith.xyz
+  - jagoff.me
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
