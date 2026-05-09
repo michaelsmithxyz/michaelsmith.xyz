@@ -9,6 +9,7 @@ check:
 		smith.pizza/scripts/**/*.ts \
 		jagoff.me/src/**/*.ts
 	@pnpm --filter "michaelsmith.xyz" exec -- tsc
+	@pnpm --filter "michaelsmith.xyz" exec -- wrangler types --check
 
 fmt:
 	@deno fmt
@@ -23,7 +24,7 @@ michaelsmith.xyz/codegen:
 	@pnpm --filter "michaelsmith.xyz" exec -- wrangler types
 
 michaelsmith.xyz/build: export BROWSERSLIST_IGNORE_OLD_DATA := true
-michaelsmith.xyz/build: michaelsmith.xyz/codegen
+michaelsmith.xyz/build:
 	@pnpm --filter "michaelsmith.xyz" exec -- tailwindcss \
 		--config tailwind.config.js \
 		--minify \
