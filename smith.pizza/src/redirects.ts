@@ -1,34 +1,21 @@
 import { nanoid } from 'nanoid';
-import { Maybe } from './types.ts';
-import { Store } from './store.ts';
 
-export const generateRedirectID = (): string => nanoid(16);
+import type { Store } from './store.ts';
+import type { Maybe } from './types.ts';
 
-export const getRedirect = async (
-  store: Store,
-  key: string,
-): Promise<Maybe<string>> => (
-  await store.get(key)
-);
+const generatedIdLength = 16;
+export const generateRedirectID = (): string => nanoid(generatedIdLength);
 
-export const hasRedirect = async (
-  store: Store,
-  key: string,
-): Promise<boolean> => (
-  await store.has(key)
-);
+export const getRedirect = async (store: Store, key: string): Promise<Maybe<string>> =>
+  await store.get(key);
 
-export const setRedirect = async (
-  store: Store,
-  key: string,
-  target: string,
-): Promise<void> => {
+export const hasRedirect = async (store: Store, key: string): Promise<boolean> =>
+  await store.has(key);
+
+export const setRedirect = async (store: Store, key: string, target: string): Promise<void> => {
   await store.set(key, target);
 };
 
-export const deleteRedirect = async (
-  store: Store,
-  key: string,
-): Promise<void> => {
+export const deleteRedirect = async (store: Store, key: string): Promise<void> => {
   await store.delete(key);
 };

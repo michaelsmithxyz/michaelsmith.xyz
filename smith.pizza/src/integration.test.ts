@@ -1,24 +1,22 @@
-import { exports } from "cloudflare:workers";
+import { Status } from '@michaelsmith.xyz/utils/http';
+import { exports } from 'cloudflare:workers';
 import { beforeAll, describe, expect, it } from 'vitest';
+
 import { exportApiKey, signApiKey } from './crypto.ts';
 
 let admin_api_key = '';
 let not_admin_api_key = '';
 
 beforeAll(async () => {
-  admin_api_key = exportApiKey(
-    await signApiKey({ id: 'admin', roles: ['admin'] }),
-  );
+  admin_api_key = exportApiKey(await signApiKey({ id: 'admin', roles: ['admin'] }));
 
-  not_admin_api_key = exportApiKey(
-    await signApiKey({ id: 'not_admin', roles: [] }),
-  );
+  not_admin_api_key = exportApiKey(await signApiKey({ id: 'not_admin', roles: [] }));
 });
 
 describe('smith.pizza integration tests', () => {
   it('returns 404 when a key is not found', async () => {
     const response = await exports.default.fetch('https://example.com/notARealKey');
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(Status.NotFound);
   });
 
   it('assigns a new key when a key is not specified', async () => {
@@ -28,7 +26,7 @@ describe('smith.pizza integration tests', () => {
       headers: { 'X-Api-Key': admin_api_key },
     });
 
-    expect(postResponse.status).toBe(201);
+    expect(postResponse.status).toBe(Status.Created);
 
     const postResponseBody = (await postResponse.json()) as { location: string };
     expect(typeof postResponseBody.location).toBe('string');
@@ -38,7 +36,7 @@ describe('smith.pizza integration tests', () => {
       { method: 'GET', redirect: 'manual' },
     );
 
-    expect(getResponse.status).toBe(308);
+    expect(getResponse.status).toBe(Status.PermanentRedirect);
     expect(getResponse.headers.get('location')).toBe('https://google.com');
   });
 
@@ -49,7 +47,7 @@ describe('smith.pizza integration tests', () => {
       headers: { 'X-Api-Key': admin_api_key },
     });
 
-    expect(putResponse.status).toBe(201);
+    expect(putResponse.status).toBe(Status.Created);
 
     const putResponseBody = (await putResponse.json()) as { location: string };
     expect(putResponseBody.location).toBe('google');
@@ -59,7 +57,7 @@ describe('smith.pizza integration tests', () => {
       redirect: 'manual',
     });
 
-    expect(getResponse.status).toBe(308);
+    expect(getResponse.status).toBe(Status.PermanentRedirect);
     expect(getResponse.headers.get('location')).toBe('https://google.com');
   });
 
@@ -69,19 +67,19 @@ describe('smith.pizza integration tests', () => {
       body: JSON.stringify({ target: 'https://google.com' }),
       headers: { 'X-Api-Key': admin_api_key },
     });
-    expect(putResponse.status).toBe(201);
+    expect(putResponse.status).toBe(Status.Created);
 
     const deleteResponse = await exports.default.fetch('https://example.com/toDelete', {
       method: 'DELETE',
       headers: { 'X-Api-Key': admin_api_key },
     });
-    expect(deleteResponse.status).toBe(204);
+    expect(deleteResponse.status).toBe(Status.NoContent);
 
     const getResponse = await exports.default.fetch('https://example.com/toDelete', {
       method: 'GET',
       redirect: 'manual',
     });
-    expect(getResponse.status).toBe(404);
+    expect(getResponse.status).toBe(Status.NotFound);
   });
 
   describe('authentication', () => {
@@ -90,7 +88,7 @@ describe('smith.pizza integration tests', () => {
         method: 'POST',
         body: JSON.stringify({ target: 'https://google.com' }),
       });
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(Status.Forbidden);
     });
 
     it('requires an API key to put a new key', async () => {
@@ -98,14 +96,14 @@ describe('smith.pizza integration tests', () => {
         method: 'PUT',
         body: JSON.stringify({ target: 'https://google.com' }),
       });
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(Status.Forbidden);
     });
 
     it('requires an API key to delete a key', async () => {
       const response = await exports.default.fetch('https://example.com/key', {
         method: 'DELETE',
       });
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(Status.Forbidden);
     });
 
     it('requires an admin API key to post a new key', async () => {
@@ -114,7 +112,7 @@ describe('smith.pizza integration tests', () => {
         body: JSON.stringify({ target: 'https://google.com' }),
         headers: { 'X-Api-Key': not_admin_api_key },
       });
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(Status.Forbidden);
     });
 
     it('requires an admin API key to put a new key', async () => {
@@ -123,7 +121,7 @@ describe('smith.pizza integration tests', () => {
         body: JSON.stringify({ target: 'https://google.com' }),
         headers: { 'X-Api-Key': not_admin_api_key },
       });
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(Status.Forbidden);
     });
 
     it('requires an admin API key to delete a key', async () => {
@@ -131,7 +129,7 @@ describe('smith.pizza integration tests', () => {
         method: 'DELETE',
         headers: { 'X-Api-Key': not_admin_api_key },
       });
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(Status.Forbidden);
     });
   });
 });

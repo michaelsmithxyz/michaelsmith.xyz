@@ -8,6 +8,11 @@ check:
 	@pnpm --filter "jagoff.me" exec -- wrangler types --check
 	@pnpm --filter "smith.pizza" exec -- tsc
 	@pnpm --filter "smith.pizza" exec -- wrangler types --check
+	@pnpm exec -- oxlint
+	@pnpm exec -- oxfmt --check
+
+fmt:
+	@pnpm exec -- oxfmt
 
 test:
 	@pnpm --filter "smith.pizza" exec -- vitest run

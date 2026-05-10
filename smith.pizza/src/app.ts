@@ -1,4 +1,6 @@
-import { Context, Hono } from 'hono';
+import { Status } from '@michaelsmith.xyz/utils/http';
+import { type Context, Hono } from 'hono';
+
 import { apiKeyHasRole } from './auth.ts';
 import {
   deleteRedirect,
@@ -9,33 +11,16 @@ import {
 } from './redirects.ts';
 import { getStore } from './store.ts';
 
-const Status = {
-  Created: 201,
-  NoContent: 204,
-  PermanentRedirect: 308,
-  BadRequest: 400,
-  Forbidden: 403,
-  NotFound: 404,
-  Conflict: 409,
-} as const;
-
 const API_KEY_HEADER = 'X-Api-Key';
 
 type CreateRedirectMessage = {
   target: string;
 };
 
-const isCreateRedirectMessage = (
-  value: unknown,
-): value is CreateRedirectMessage => (
-  typeof value === 'object' &&
-  value !== null &&
-  Object.hasOwn(value, 'target')
-);
+const isCreateRedirectMessage = (value: unknown): value is CreateRedirectMessage =>
+  typeof value === 'object' && value !== null && Object.hasOwn(value, 'target');
 
-const isAuthenticatedAsAdmin = async (
-  c: Context,
-): Promise<boolean> => {
+const isAuthenticatedAsAdmin = async (c: Context): Promise<boolean> => {
   const apiKey = c.req.header(API_KEY_HEADER);
   if (!apiKey) {
     return false;
@@ -73,9 +58,8 @@ const notFound = (c: Context) => {
   return c.text('Not found');
 };
 
-const permanentRedirect = (c: Context, location: string) => {
-  return c.redirect(location, Status.PermanentRedirect);
-};
+const permanentRedirect = (c: Context, location: string) =>
+  c.redirect(location, Status.PermanentRedirect);
 
 const indexContent = `
 <!DOCTYPE html>
@@ -95,9 +79,7 @@ export const makeApp = (env: Env): Hono => {
   const store = getStore(env);
   const app = new Hono();
 
-  app.get('/', (c) => {
-    return c.html(indexContent);
-  });
+  app.get('/', (c) => c.html(indexContent));
 
   app.get('/:key', async (c) => {
     const key = c.req.param('key');

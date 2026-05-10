@@ -1,6 +1,6 @@
 name: 'Setup pnpm'
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d
       with:
@@ -8,4 +8,3 @@ runs:
     - uses: actions/setup-node@v6
       with:
         node-version: 24.14.0
-

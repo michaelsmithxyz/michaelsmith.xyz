@@ -2,6 +2,7 @@ packages:
   - michaelsmith.xyz
   - jagoff.me
   - smith.pizza
+  - utils
 
 allowBuilds:
   '@parcel/watcher': true
@@ -11,6 +12,6 @@ allowBuilds:
 
 packageExtensions:
   # See: https://github.com/cloudflare/workers-sdk/issues/13807
-  "@cloudflare/vitest-pool-workers":
+  '@cloudflare/vitest-pool-workers':
     dependencies:
-      undici: "*"
+      undici: '*'

@@ -1,9 +1,7 @@
 export default {
-  content: [
-    '**/*.{ts,tsx}',
-  ],
+  content: ['**/*.{ts,tsx}'],
   theme: {
     extend: {},
   },
   plugins: [],
-}
+};

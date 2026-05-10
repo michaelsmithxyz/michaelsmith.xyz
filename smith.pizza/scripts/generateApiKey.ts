@@ -19,13 +19,10 @@ if (!values.data) {
 }
 
 const algorithm = { name: 'HMAC', hash: 'SHA-512' };
-const importedKey = await crypto.subtle.importKey(
-  'jwk',
-  JSON.parse(hmacKey),
-  algorithm,
-  true,
-  ['sign', 'verify'],
-);
+const importedKey = await crypto.subtle.importKey('jwk', JSON.parse(hmacKey), algorithm, true, [
+  'sign',
+  'verify',
+]);
 
 const data = new TextEncoder().encode(values.data);
 const signature = await crypto.subtle.sign(algorithm, importedKey, data);

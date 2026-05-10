@@ -1,5 +1,7 @@
+import { Status } from '@michaelsmith.xyz/utils/http';
+
 export default {
   fetch(): Response {
-    return Response.redirect('https://www.jaguars.com', 307);
+    return Response.redirect('https://www.jaguars.com', Status.TemporaryRedirect);
   },
 } satisfies ExportedHandler<Env>;
