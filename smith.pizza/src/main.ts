@@ -4,7 +4,5 @@ import { makeApp } from './app.ts';
 const app = makeApp(env);
 
 export default {
-  async fetch(request, env, ctx): Promise<Response> {
-    return await app.fetch(request, env as unknown as Record<string, string>, ctx);
-  },
+  fetch: app.fetch, 
 } satisfies ExportedHandler<Env>;

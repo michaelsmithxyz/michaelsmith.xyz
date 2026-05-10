@@ -1,4 +1,4 @@
-import { Application, Request, Response, Router, Status } from '@oak/oak';
+import { Context, Hono } from 'hono';
 import { apiKeyHasRole } from './auth.ts';
 import {
   deleteRedirect,
@@ -8,7 +8,16 @@ import {
   setRedirect,
 } from './redirects.ts';
 import { getStore } from './store.ts';
-import { Maybe } from './types.ts';
+
+const Status = {
+  Created: 201,
+  NoContent: 204,
+  PermanentRedirect: 308,
+  BadRequest: 400,
+  Forbidden: 403,
+  NotFound: 404,
+  Conflict: 409,
+} as const;
 
 const API_KEY_HEADER = 'X-Api-Key';
 
@@ -24,52 +33,48 @@ const isCreateRedirectMessage = (
   Object.hasOwn(value, 'target')
 );
 
-const getApiKey = (headers: Headers): Maybe<string> => (
-  headers.get(API_KEY_HEADER) ?? undefined
-);
-
 const isAuthenticatedAsAdmin = async (
-  request: Request,
+  c: Context,
 ): Promise<boolean> => {
-  const apiKey = getApiKey(request.headers);
+  const apiKey = c.req.header(API_KEY_HEADER);
   if (!apiKey) {
     return false;
   }
   return await apiKeyHasRole(apiKey, 'admin');
 };
 
-const badRequest = (response: Response) => {
-  response.status = Status.BadRequest;
-  response.body = 'Bad request';
+const badRequest = (c: Context) => {
+  c.status(Status.BadRequest);
+  return c.text('Bad request');
 };
 
-const conflict = (response: Response) => {
-  response.status = Status.Conflict;
-  response.body = 'Conflict';
+const conflict = (c: Context) => {
+  c.status(Status.Conflict);
+  return c.text('Conflict');
 };
 
-const created = (response: Response, body: Response['body']) => {
-  response.status = Status.Created;
-  response.body = body;
+const created = <T extends object>(c: Context, body: T) => {
+  c.status(Status.Created);
+  return c.json(body);
 };
 
-const deleted = (response: Response) => {
-  response.status = Status.NoContent;
+const deleted = (c: Context) => {
+  c.status(Status.NoContent);
+  return c.body(null);
 };
 
-const forbidden = (response: Response) => {
-  response.status = Status.Forbidden;
-  response.body = 'Forbidden';
+const forbidden = (c: Context) => {
+  c.status(Status.Forbidden);
+  return c.text('Forbidden');
 };
 
-const notFound = (response: Response) => {
-  response.status = Status.NotFound;
-  response.body = 'Not found';
+const notFound = (c: Context) => {
+  c.status(Status.NotFound);
+  return c.text('Not found');
 };
 
-const permanentRedirect = (response: Response, location: string) => {
-  response.status = Status.PermanentRedirect;
-  response.headers.append('Location', location);
+const permanentRedirect = (c: Context, location: string) => {
+  return c.redirect(location, Status.PermanentRedirect);
 };
 
 const indexContent = `
@@ -86,81 +91,76 @@ const indexContent = `
 </html>
 `;
 
-export const makeApp = (env: Env): Application => {
+export const makeApp = (env: Env): Hono => {
   const store = getStore(env);
-  const app = new Application();
-  const router = new Router();
+  const app = new Hono();
 
-  router.get('/', ({ response }) => {
-    response.type = 'html';
-    response.body = indexContent;
+  app.get('/', (c) => {
+    return c.html(indexContent);
   });
 
-  router.get('/:key', async ({ params, response }) => {
-    const { key } = params;
+  app.get('/:key', async (c) => {
+    const key = c.req.param('key');
     const url = await getRedirect(store, key);
     if (!url) {
-      return notFound(response);
+      return notFound(c);
     }
     console.info(`Redirect request: "${key}" => "${url}"`);
-    return permanentRedirect(response, url);
+    return permanentRedirect(c, url);
   });
 
-  router.put('/:key', async ({ params, request, response }) => {
-    if (!(await isAuthenticatedAsAdmin(request))) {
-      return forbidden(response);
+  app.put('/:key', async (c) => {
+    if (!(await isAuthenticatedAsAdmin(c))) {
+      return forbidden(c);
     }
 
-    const { key } = params;
+    const key = c.req.param('key');
     if (await hasRedirect(store, key)) {
-      return conflict(response);
+      return conflict(c);
     }
 
-    const body = await request.body.json();
+    const body = await c.req.json();
     if (!isCreateRedirectMessage(body)) {
-      return badRequest(response);
+      return badRequest(c);
     }
 
     console.info(`Setting redirect: "${key}" => "${body.target}"`);
     await setRedirect(store, key, body.target);
 
-    return created(response, { location: key });
+    return created(c, { location: key });
   });
 
-  router.delete('/:key', async ({ params, request, response }) => {
-    if (!(await isAuthenticatedAsAdmin(request))) {
-      return forbidden(response);
+  app.delete('/:key', async (c) => {
+    if (!(await isAuthenticatedAsAdmin(c))) {
+      return forbidden(c);
     }
 
-    const { key } = params;
+    const key = c.req.param('key');
     if (!(await hasRedirect(store, key))) {
-      return notFound(response);
+      return notFound(c);
     }
 
     console.info(`Deleting redirect: "${key}"`);
     await deleteRedirect(store, key);
 
-    return deleted(response);
+    return deleted(c);
   });
 
-  router.post('/', async ({ request, response }) => {
-    if (!(await isAuthenticatedAsAdmin(request))) {
-      return forbidden(response);
+  app.post('/', async (c) => {
+    if (!(await isAuthenticatedAsAdmin(c))) {
+      return forbidden(c);
     }
 
-    const body = await request.body.json();
+    const body = await c.req.json();
     if (!isCreateRedirectMessage(body)) {
-      return badRequest(response);
+      return badRequest(c);
     }
 
     const key = generateRedirectID();
     console.info(`Setting redirect: "${key}" => "${body.target}"`);
     await setRedirect(store, key, body.target);
-    return created(response, { location: key });
+    return created(c, { location: key });
   });
-
-  app.use(router.routes());
-  app.use(router.allowedMethods());
 
   return app;
 };
