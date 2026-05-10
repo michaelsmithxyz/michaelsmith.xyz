@@ -1,17 +1,11 @@
-import { render } from 'preact-render-to-string';
-import { Application, Router } from '@oak/oak';
+import { Hono } from 'hono';
 import { Home } from './Home.tsx';
 
-const app = new Application();
-const router = new Router();
+const app = new Hono();
 
-router.get('/', ({ response }) => {
-  response.type = 'html';
-  response.body = render(<Home />);
+app.get('/', (c) => {
+  return c.html(<Home />);
 });
-
-app.use(router.routes());
-app.use(router.allowedMethods());
 
 export default {
   async fetch(request, env, ctx): Promise<Response> {

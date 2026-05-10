@@ -2,7 +2,7 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "preact"
+    "jsxImportSource": "hono/jsx"
   },
   "include": ["src/**/*", "worker-configuration.d.ts"]
 }
