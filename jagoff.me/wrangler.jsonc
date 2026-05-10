@@ -8,21 +8,21 @@
   "routes": [
     {
       "pattern": "dev.jagoff.me",
-      "custom_domain": true
-    }
+      "custom_domain": true,
+    },
   ],
   "env": {
     "prod": {
       "routes": [
         {
           "pattern": "jagoff.me",
-          "custom_domain": true
+          "custom_domain": true,
         },
         {
           "pattern": "www.jagoff.me",
-          "custom_domain": true
-        }
-      ]
-    }
-  }
+          "custom_domain": true,
+        },
+      ],
+    },
+  },
 }

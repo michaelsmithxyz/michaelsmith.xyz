@@ -1,10 +1,5 @@
-import {
-  decodeContent,
-  importApiKey,
-  isRawSignedApiKey,
-  isValidSignedApiKey,
-} from './crypto.ts';
-import { Maybe } from './types.ts';
+import { decodeContent, importApiKey, isRawSignedApiKey, isValidSignedApiKey } from './crypto.ts';
+import type { Maybe } from './types.ts';
 
 export type AdminRole = 'admin';
 export type Role = AdminRole;
@@ -14,17 +9,14 @@ export type User = {
   roles: Role[];
 };
 
-const isUser = (value: unknown): value is User => (
+const isUser = (value: unknown): value is User =>
   typeof value === 'object' &&
   value !== null &&
   typeof (value as User).id === 'string' &&
   Array.isArray((value as User).roles) &&
-  (value as User).roles.every((role) => typeof role === 'string')
-);
+  (value as User).roles.every((role) => typeof role === 'string');
 
-export const apiKeyToUser = async (
-  apiKey: string,
-): Promise<Maybe<User>> => {
+export const apiKeyToUser = async (apiKey: string): Promise<Maybe<User>> => {
   try {
     const parsedKey = JSON.parse(importApiKey(apiKey));
     if (!isRawSignedApiKey(parsedKey)) {
@@ -45,10 +37,7 @@ export const apiKeyToUser = async (
   }
 };
 
-export const apiKeyHasRole = async (
-  apiKey: string,
-  role: Role,
-): Promise<boolean> => {
+export const apiKeyHasRole = async (apiKey: string, role: Role): Promise<boolean> => {
   const user = await apiKeyToUser(apiKey);
   if (!user) {
     return false;

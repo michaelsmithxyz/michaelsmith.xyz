@@ -19,20 +19,19 @@ if (!values.key) {
 }
 
 const algorithm = { name: 'HMAC', hash: 'SHA-512' };
-const importedKey = await crypto.subtle.importKey(
-  'jwk',
-  JSON.parse(hmacKey),
-  algorithm,
-  true,
-  ['sign', 'verify'],
-);
+const importedKey = await crypto.subtle.importKey('jwk', JSON.parse(hmacKey), algorithm, true, [
+  'sign',
+  'verify',
+]);
 
 const decode = (s: string) => new Uint8Array(Buffer.from(s, 'base64'));
 
 const outer = JSON.parse(new TextDecoder().decode(decode(values.key)));
 if (
-  typeof outer !== 'object' || outer === null ||
-  typeof outer.content !== 'string' || typeof outer.signature !== 'string'
+  typeof outer !== 'object' ||
+  outer === null ||
+  typeof outer.content !== 'string' ||
+  typeof outer.signature !== 'string'
 ) {
   console.error('Invalid key shape');
   process.exit(1);

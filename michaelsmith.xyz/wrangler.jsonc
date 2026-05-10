@@ -7,27 +7,27 @@
   "assets": {
     "directory": "./static",
     "binding": "ASSETS",
-    "run_worker_first": true
+    "run_worker_first": true,
   },
   "workers_dev": false,
   "routes": [
     {
       "pattern": "dev.michaelsmith.xyz",
-      "custom_domain": true
-    }
+      "custom_domain": true,
+    },
   ],
   "env": {
     "prod": {
       "routes": [
         {
           "pattern": "michaelsmith.xyz",
-          "custom_domain": true
+          "custom_domain": true,
         },
         {
           "pattern": "www.michaelsmith.xyz",
-          "custom_domain": true
-        }
-      ]
-    }
-  }
+          "custom_domain": true,
+        },
+      ],
+    },
+  },
 }

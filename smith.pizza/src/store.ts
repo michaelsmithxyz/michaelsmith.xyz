@@ -1,34 +1,38 @@
-import { Maybe } from './types.ts';
+import type { Maybe } from './types.ts';
 
-export interface Store {
+export type Store = {
   get(key: string): Promise<Maybe<string>>;
   set(key: string, value: string): Promise<void>;
   delete(key: string): Promise<void>;
   has(key: string): Promise<boolean>;
-}
+};
 
 export class InMemoryStore implements Store {
-  #map = new Map<string, string>();
+  private readonly map = new Map<string, string>();
 
   async get(key: string): Promise<Maybe<string>> {
-    return this.#map.get(key);
+    return this.map.get(key);
   }
 
   async set(key: string, value: string) {
-    this.#map.set(key, value);
+    this.map.set(key, value);
   }
 
   async delete(key: string) {
-    this.#map.delete(key);
+    this.map.delete(key);
   }
 
   async has(key: string): Promise<boolean> {
-    return this.#map.has(key);
+    return this.map.has(key);
   }
 }
 
 export class WorkersKvStore implements Store {
-  constructor(private kv: KVNamespace) {}
+  private readonly kv: KVNamespace;
+
+  constructor(kv: KVNamespace) {
+    this.kv = kv;
+  }
 
   async get(key: string): Promise<Maybe<string>> {
     const value = await this.kv.get(key);
