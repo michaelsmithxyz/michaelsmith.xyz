@@ -2,24 +2,17 @@ error:
 	@echo 'Target required'
 
 check:
-	@deno fmt --check
-	@deno lint --ignore=**/worker-configuration.d.ts
-	@deno check \
-		smith.pizza/src/**/*.ts \
-		smith.pizza/scripts/**/*.ts
 	@pnpm --filter "michaelsmith.xyz" exec -- tsc
 	@pnpm --filter "michaelsmith.xyz" exec -- wrangler types --check
 	@pnpm --filter "jagoff.me" exec -- tsc
 	@pnpm --filter "jagoff.me" exec -- wrangler types --check
-
-fmt:
-	@deno fmt
+	@pnpm --filter "smith.pizza" exec -- tsc
+	@pnpm --filter "smith.pizza" exec -- wrangler types --check
 
 test:
-	@deno test -A
+	@pnpm --filter "smith.pizza" exec -- vitest run
 
-smith.pizza/run:
-	@deno run -A smith.pizza/src/main.ts
+DEPLOY_ENV ?= ""
 
 michaelsmith.xyz/codegen:
 	@pnpm --filter "michaelsmith.xyz" exec -- wrangler types
@@ -35,7 +28,6 @@ michaelsmith.xyz/build:
 michaelsmith.xyz/run: michaelsmith.xyz/build
 	@pnpm --filter "michaelsmith.xyz" exec -- wrangler dev
 
-DEPLOY_ENV ?= ""
 michaelsmith.xyz/deploy: michaelsmith.xyz/build
 	@CLOUDFLARE_ENV=$(DEPLOY_ENV) pnpm --filter "michaelsmith.xyz" exec -- wrangler deploy
 
@@ -47,3 +39,12 @@ jagoff.me/run:
 
 jagoff.me/deploy:
 	@CLOUDFLARE_ENV=$(DEPLOY_ENV) pnpm --filter "jagoff.me" exec -- wrangler deploy
+
+smith.pizza/codegen:
+	@pnpm --filter "smith.pizza" exec -- wrangler types
+
+smith.pizza/run:
+	@pnpm --filter "smith.pizza" exec -- wrangler dev
+
+smith.pizza/deploy:
+	@CLOUDFLARE_ENV=$(DEPLOY_ENV) pnpm --filter "smith.pizza" exec -- wrangler deploy

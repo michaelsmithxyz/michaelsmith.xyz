@@ -1,8 +1,16 @@
 packages:
   - michaelsmith.xyz
   - jagoff.me
+  - smith.pizza
+
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
   sharp: true
   workerd: true
+
+packageExtensions:
+  # See: https://github.com/cloudflare/workers-sdk/issues/13807
+  "@cloudflare/vitest-pool-workers":
+    dependencies:
+      undici: "*"

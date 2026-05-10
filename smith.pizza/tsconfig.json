@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleDetection": "force",
+    "types": ["@cloudflare/vitest-pool-workers"]
+  },
+  "include": ["src/**/*", "scripts/**/*", "worker-configuration.d.ts"]
+}

@@ -1,5 +1,9 @@
-import { decodeBase64 } from '@std/encoding/base64';
-import { isRawSignedApiKey, isValidSignedApiKey } from './crypto.ts';
+import {
+  decodeContent,
+  importApiKey,
+  isRawSignedApiKey,
+  isValidSignedApiKey,
+} from './crypto.ts';
 import { Maybe } from './types.ts';
 
 export type AdminRole = 'admin';
@@ -10,35 +14,28 @@ export type User = {
   roles: Role[];
 };
 
-const isUser = (
-  // deno-lint-ignore no-explicit-any
-  value: any,
-): value is User => (
+const isUser = (value: unknown): value is User => (
   typeof value === 'object' &&
-  typeof value.id === 'string' &&
-  Array.isArray(value.roles) &&
-  value.roles.every(
-    // deno-lint-ignore no-explicit-any
-    (role: any) => typeof role === 'string',
-  )
+  value !== null &&
+  typeof (value as User).id === 'string' &&
+  Array.isArray((value as User).roles) &&
+  (value as User).roles.every((role) => typeof role === 'string')
 );
 
 export const apiKeyToUser = async (
   apiKey: string,
 ): Promise<Maybe<User>> => {
   try {
-    const decoder = new TextDecoder();
-    const parsedKey = JSON.parse(decoder.decode(decodeBase64(apiKey)));
+    const parsedKey = JSON.parse(importApiKey(apiKey));
     if (!isRawSignedApiKey(parsedKey)) {
       return undefined;
     }
 
-    const isValid = await isValidSignedApiKey(parsedKey);
-    if (!isValid) {
+    if (!(await isValidSignedApiKey(parsedKey))) {
       return undefined;
     }
 
-    const parsed = JSON.parse(decoder.decode(decodeBase64(parsedKey.content)));
+    const parsed = JSON.parse(decodeContent(parsedKey.content));
     if (!isUser(parsed)) {
       return undefined;
     }
@@ -52,9 +49,7 @@ export const apiKeyHasRole = async (
   apiKey: string,
   role: Role,
 ): Promise<boolean> => {
-  const user = await apiKeyToUser(
-    apiKey,
-  );
+  const user = await apiKeyToUser(apiKey);
   if (!user) {
     return false;
   }

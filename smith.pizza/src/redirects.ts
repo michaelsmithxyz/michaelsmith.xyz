@@ -1,30 +1,21 @@
 import { nanoid } from 'nanoid';
-import { encodeBase64 } from '@std/encoding';
 import { Maybe } from './types.ts';
 import { Store } from './store.ts';
 
-export const generateRedirectID = () => (
-  nanoid(16)
-);
-
-const storeKey = (
-  key: string,
-): string => (
-  encodeBase64(key)
-);
+export const generateRedirectID = (): string => nanoid(16);
 
 export const getRedirect = async (
   store: Store,
   key: string,
 ): Promise<Maybe<string>> => (
-  await store.get(storeKey(key))
+  await store.get(key)
 );
 
 export const hasRedirect = async (
   store: Store,
   key: string,
 ): Promise<boolean> => (
-  await store.has(storeKey(key))
+  await store.has(key)
 );
 
 export const setRedirect = async (
@@ -32,12 +23,12 @@ export const setRedirect = async (
   key: string,
   target: string,
 ): Promise<void> => {
-  await store.set(storeKey(key), target);
+  await store.set(key, target);
 };
 
 export const deleteRedirect = async (
   store: Store,
   key: string,
 ): Promise<void> => {
-  await store.delete(storeKey(key));
+  await store.delete(key);
 };
