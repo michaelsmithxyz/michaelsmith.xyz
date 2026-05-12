@@ -4,6 +4,12 @@
   "main": "src/main.tsx",
   "compatibility_date": "2026-05-08",
   "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+    },
+  },
   "assets": {
     "directory": "./static",
     "binding": "ASSETS",
