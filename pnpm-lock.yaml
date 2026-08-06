@@ -39,8 +39,8 @@ importers:
   michaelsmith.xyz:
     dependencies:
       hono:
-        specifier: ^4.12.18
-        version: 4.12.18
+        specifier: ^4.13.0
+        version: 4.13.0
     devDependencies:
       '@types/node':
         specifier: ^24.12.3
@@ -59,7 +59,7 @@ importers:
     dependencies:
       '@hono/arktype-validator':
         specifier: ^2.0.1
-        version: 2.0.1(arktype@2.2.3)(hono@4.12.18)
+        version: 2.0.1(arktype@2.2.3)(hono@4.13.0)
       '@michaelsmith.xyz/utils':
         specifier: workspace:*
         version: link:../utils
@@ -67,8 +67,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       hono:
-        specifier: ^4.12.18
-        version: 4.12.18
+        specifier: ^4.13.0
+        version: 4.13.0
       nanoid:
         specifier: ^5.0.9
         version: 5.1.11
@@ -1121,8 +1121,8 @@ packages:
     resolution: {integrity: sha512-ej4AhfhfL2Q2zpMmLo7U1Uv9+PyhIZpgQLGT1F9miIGmiCJIoCgSmczFdrc97mWT4kVY72KA+WnnhJ5pghSvSg==}
     engines: {node: '>= 0.4'}
 
-  hono@4.12.18:
-    resolution: {integrity: sha512-RWzP96k/yv0PQfyXnWjs6zot20TqfpfsNXhOnev8d1InAxubW93L11/oNUc3tQqn2G0bSdAOBpX+2uDFHV7kdQ==}
+  hono@4.13.0:
+    resolution: {integrity: sha512-jhunvfHWxd7J5EFfSgH4xsYJzSe/lfqbUCxiyyeaQasUsXeEHXtzVid+7EOGByc5JnFa23SSFL3Y2RV/z1T+eQ==}
     engines: {node: '>=16.9.0'}
 
   is-binary-path@2.1.0:
@@ -1691,10 +1691,10 @@ snapshots:
   '@esbuild/win32-x64@0.27.3':
     optional: true
 
-  '@hono/arktype-validator@2.0.1(arktype@2.2.3)(hono@4.12.18)':
+  '@hono/arktype-validator@2.0.1(arktype@2.2.3)(hono@4.13.0)':
     dependencies:
       arktype: 2.2.3
-      hono: 4.12.18
+      hono: 4.13.0
 
   '@img/colour@1.1.0': {}
 
@@ -2247,7 +2247,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.12.18: {}
+  hono@4.13.0: {}
 
   is-binary-path@2.1.0:
     dependencies:
