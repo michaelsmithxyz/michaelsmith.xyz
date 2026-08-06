@@ -1,5 +1,8 @@
+import { arktypeValidator } from '@hono/arktype-validator';
 import { Status } from '@michaelsmith.xyz/utils/http';
+import { type } from 'arktype';
 import { type Context, Hono } from 'hono';
+import { createMiddleware } from 'hono/factory';
 
 import { apiKeyHasRole } from './auth.ts';
 import {
@@ -13,12 +16,9 @@ import { getStore } from './store.ts';
 
 const API_KEY_HEADER = 'X-Api-Key';
 
-type CreateRedirectMessage = {
-  target: string;
-};
-
-const isCreateRedirectMessage = (value: unknown): value is CreateRedirectMessage =>
-  typeof value === 'object' && value !== null && Object.hasOwn(value, 'target');
+const CreateRedirectMessage = type({
+  target: 'string.url',
+});
 
 const isAuthenticatedAsAdmin = async (c: Context): Promise<boolean> => {
   const apiKey = c.req.header(API_KEY_HEADER);
@@ -26,11 +26,6 @@ const isAuthenticatedAsAdmin = async (c: Context): Promise<boolean> => {
     return false;
   }
   return await apiKeyHasRole(apiKey, 'admin');
-};
-
-const badRequest = (c: Context) => {
-  c.status(Status.BadRequest);
-  return c.text('Bad request');
 };
 
 const conflict = (c: Context) => {
@@ -60,6 +55,14 @@ const notFound = (c: Context) => {
 
 const permanentRedirect = (c: Context, location: string) =>
   c.redirect(location, Status.PermanentRedirect);
+
+const requireAdmin = createMiddleware(async (c, next) => {
+  if (!(await isAuthenticatedAsAdmin(c))) {
+    return forbidden(c);
+  }
+
+  await next();
+});
 
 const indexContent = `
 <!DOCTYPE html>
@@ -91,20 +94,13 @@ export const makeApp = (env: Env): Hono => {
     return permanentRedirect(c, url);
   });
 
-  app.put('/:key', async (c) => {
-    if (!(await isAuthenticatedAsAdmin(c))) {
-      return forbidden(c);
-    }
-
+  app.put('/:key', requireAdmin, arktypeValidator('json', CreateRedirectMessage), async (c) => {
     const key = c.req.param('key');
     if (await hasRedirect(store, key)) {
       return conflict(c);
     }
 
-    const body = await c.req.json();
-    if (!isCreateRedirectMessage(body)) {
-      return badRequest(c);
-    }
+    const body = c.req.valid('json');
 
     console.info(`Setting redirect: "${key}" => "${body.target}"`);
     await setRedirect(store, key, body.target);
@@ -112,11 +108,7 @@ export const makeApp = (env: Env): Hono => {
     return created(c, { location: key });
   });
 
-  app.delete('/:key', async (c) => {
-    if (!(await isAuthenticatedAsAdmin(c))) {
-      return forbidden(c);
-    }
-
+  app.delete('/:key', requireAdmin, async (c) => {
     const key = c.req.param('key');
     if (!(await hasRedirect(store, key))) {
       return notFound(c);
@@ -128,15 +120,8 @@ export const makeApp = (env: Env): Hono => {
     return deleted(c);
   });
 
-  app.post('/', async (c) => {
-    if (!(await isAuthenticatedAsAdmin(c))) {
-      return forbidden(c);
-    }
-
-    const body = await c.req.json();
-    if (!isCreateRedirectMessage(body)) {
-      return badRequest(c);
-    }
+  app.post('/', requireAdmin, arktypeValidator('json', CreateRedirectMessage), async (c) => {
+    const body = c.req.valid('json');
 
     const key = generateRedirectID();
     console.info(`Setting redirect: "${key}" => "${body.target}"`);
